@@ -5,28 +5,8 @@
 library(googleCharts)
 library(shiny)
 library(dplyr)
-library(RPostgres)
 
-getDbConnection <- function() {
-  conn <- dbConnect(drv = RPostgres::Postgres(),
-                    dbname = Sys.getenv("RDS_DB_NAME"),
-                    host = Sys.getenv("RDS_ENDPOINT"),
-                    user = Sys.getenv("RDS_USERNAME"),
-                    password = Sys.getenv("RDS_PASSWORD"))
-}
-
-loadData <- function() {
-  con <- getDbConnection()
-
-  sql <- sprintf(
-    "SELECT * FROM %s;",
-    "healthexp"
-  )
-
-  rows <- dbGetQuery(con, sql)
-}
-
-data <- loadData()
+data <- readRDS("healthexp.Rds")
 data$Region <- as.factor(data$Region)
 
 # Use global max/min for axes so the view window stays
